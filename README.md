@@ -1,9 +1,5 @@
----
-title: Hello World
-date: 2019-06-23 03:34:26
-tags:
----
-Welcome to [Hexo](https://hexo.io/)! This is your very first post. Check [documentation](https://hexo.io/docs/) for more info. If you get any problems when using Hexo, you can find the answer in [troubleshooting](https://hexo.io/docs/troubleshooting.html) or you can ask me on [GitHub](https://github.com/hexojs/hexo/issues).
+Check [documentation](https://hexo.io/docs/) for more info.
+If you get any problems when using Hexo, you can find the answer in [troubleshooting](https://hexo.io/docs/troubleshooting.html) or you can ask me on [GitHub](https://github.com/hexojs/hexo/issues).
 
 ## Quick Start
 
@@ -37,4 +33,7 @@ More info: [Generating](https://hexo.io/docs/generating.html)
 $ hexo deploy
 ```
 
+```bash
+$ hexo generate --deploy
+```
 More info: [Deployment](https://hexo.io/docs/deployment.html)
