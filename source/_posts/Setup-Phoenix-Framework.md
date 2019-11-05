@@ -26,12 +26,25 @@ Elixir 1.9.1 (compiled with Erlang/OTP 22)
 $ mix local.hex
 ```
 
-### Install Phoenix Mix archive
+### Install Phoenix Mix archive locally
 ```
-mix archive.install hex phx_new 1.4.10
+$ mix archive.install hex phx_new
 ```
+```
+$ mix help archive.install
+    mix archive.install path/to/archive.ez
+    mix archive.install hex hex_package
+    mix archive.install hex hex_package 1.2.3
+```
+
 https://hexdocs.pm/phoenix/installation.html
 
+
+#### Check Phoenix Version
+```
+$ mix phx.new -v
+Phoenix v1.4.10
+```
 
 ### Install node.js
 ```
