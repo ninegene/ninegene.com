@@ -1,7 +1,9 @@
-.DS_Store
-Thumbs.db
-db.json
-*.log
 node_modules/
-public/
-.deploy*/
+dist/
+.astro/
+.env
+.env.*
+!.env.example
+.DS_Store
+infra/pulumi/node_modules/
+infra/pulumi/bin/

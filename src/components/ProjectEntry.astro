@@ -1,0 +1,44 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  // Show the stack and period line.
+  detailed?: boolean;
+}
+const { project, detailed = false } = Astro.props;
+const p = project.data;
+const hasStory = Boolean(project.body?.trim());
+---
+
+<li class="entry">
+  <div class="entry-head">
+    <span class="entry-name">{p.title}</span>
+    <span class="status" data-status={p.status}>{p.status}</span>
+  </div>
+  <p>{p.summary}</p>
+  {detailed && (
+    <p class="meta">
+      {p.role} · {p.period}
+      {p.stack.length > 0 && <> · {p.stack.join(', ')}</>}
+    </p>
+  )}
+  <ul class="links">
+    {p.siteUrl && (
+      <li>
+        <a href={p.siteUrl}>open site</a>
+      </li>
+    )}
+    {hasStory && (
+      <li>
+        <a href={`/projects/${project.id}/`}>engineering story</a>
+      </li>
+    )}
+    {p.repoUrl && (
+      <li>
+        <a href={p.repoUrl}>source</a>
+      </li>
+    )}
+    {!p.repoUrl && <li class="meta">source: private</li>}
+  </ul>
+</li>

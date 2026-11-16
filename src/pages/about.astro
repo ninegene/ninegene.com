@@ -1,0 +1,82 @@
+---
+import Base from '../layouts/Base.astro';
+import Sect from '../components/Sect.astro';
+---
+
+<Base
+  title="About"
+  manName="ABOUT"
+  description="About ALO (Gene): software team lead at 365 Retail Markets, volunteer tech lead for the Win Metta nonprofit, and weekend teacher."
+>
+  <Sect name="Name">
+    <h1>
+      about: <span title="Aung Lwin Oo">ALO</span>, known to some as Gene
+    </h1>
+    <p class="lede">
+      ninegene is my username. I build software, improve how teams develop and
+      operate it, and teach what I learn.
+    </p>
+  </Sect>
+
+  <Sect name="Work">
+    <p>
+      I've been at{' '}
+      <a href="https://365retailmarkets.com/">365 Retail Markets</a>
+      for more than ten years, now as a software team lead. The company makes
+      self-checkout kiosks and point-of-sale systems for unattended retail; I've
+      worked on the <a href="https://365retailmarkets.com/adm">back office</a>
+      and the{' '}
+      <a href="https://365retailmarkets.com/mm6-markets">kiosk and POS</a>
+      side, from frontend to backend to infrastructure, as part of the team that
+      builds them.
+    </p>
+    <p>The kinds of things I do there:</p>
+    <ul>
+      <li>Build and maintain backend services and the point-of-sale software that
+        talks to them, in Java, Kotlin, TypeScript, JavaScript and Python.</li>
+      <li>Run cloud infrastructure on AWS, managed as code with Terraform (and
+        earlier with CloudFormation and the AWS CDK).</li>
+      <li>Automate releases: years before AI coding tools, I built a chat bot that
+        let the team build, deploy and release from Slack.</li>
+      <li>Use AI to make development and support faster: MCP servers that connect
+        AI agents to databases, the data warehouse, logs, traces and metrics so
+        support, QA and developers can troubleshoot with evidence; agent skills
+        and repeatable cloud development environments; and documentation
+        generated from reading code across many repositories.</li>
+    </ul>
+  </Sect>
+
+  <Sect name="Volunteering">
+    <p>
+      I helped found <a href="https://winmetta.org/">Win Metta</a>, a California
+      nonprofit that offers Buddhist meditation and education programs in
+      Burmese and English, and serve as its secretary and tech lead. I build and
+      run its
+      <a href="/projects/winmetta-platform/">web platform</a> and the tools its
+      volunteers use.
+    </p>
+  </Sect>
+
+  <Sect name="Teaching">
+    <p>
+      Learning and teaching are what I enjoy most about this work. On weekends I
+      teach a small group of middle and high school students, for free. The
+      <a href="/learn/">learn</a> page lists the free resources I'm building.
+    </p>
+  </Sect>
+
+  <Sect name="Tools">
+    <p>
+      Vim, VS Code and IntelliJ IDEA for code; Obsidian for notes; mise for tool
+      versions; Claude, ChatGPT and Gemini as AI assistants. More on the
+      <a href="/uses/">uses</a> page.
+    </p>
+  </Sect>
+
+  <Sect name="Contact">
+    <p>
+      Say hello or ask a question in the issues of
+      <a href="https://github.com/ninegene/ninegene/issues">github.com/ninegene/ninegene</a>. I'm not on LinkedIn or X.
+    </p>
+  </Sect>
+</Base>

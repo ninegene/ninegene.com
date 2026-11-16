@@ -1,0 +1,42 @@
+---
+import Base from '../../layouts/Base.astro';
+import Sect from '../../components/Sect.astro';
+import { getNotes, isoDate } from '../../lib/content';
+
+const notes = await getNotes();
+---
+
+<Base
+  title="Notes"
+  manName="NOTES"
+  description="Notes by ALO (Gene) on building and running software, developer tooling, AI and teaching."
+>
+  <Sect name="Name">
+    <h1>notes: what I learn from building things</h1>
+    <p class="lede">
+      Decisions, mistakes and explanations from work, volunteering and teaching.
+      Subscribe with the <a href="/rss.xml">RSS feed</a>.
+    </p>
+  </Sect>
+
+  <Sect name="Index">
+    {notes.length === 0 ? (
+      <p>The first notes are being written. The RSS feed will have them.</p>
+    ) : (
+      <ul class="entries">
+        {notes.map((note) => (
+          <li class="entry">
+            <div class="entry-head">
+              <a class="entry-name" href={`/notes/${note.id}/`}>{note.data.title}</a>
+              <span class="meta">{isoDate(note.data.date)}</span>
+              {note.data.draft && (
+                <span class="status" data-status="planned">draft</span>
+              )}
+            </div>
+            <p>{note.data.description}</p>
+          </li>
+        ))}
+      </ul>
+    )}
+  </Sect>
+</Base>

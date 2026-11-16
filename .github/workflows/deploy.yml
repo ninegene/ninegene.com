@@ -1,0 +1,113 @@
+name: Deploy
+
+# Publishes the site to ninegene.com (S3 + CloudFront, see infra/README.md).
+#
+# Runs after CI succeeds on a push to main, and by hand (Run workflow) with any ref,
+# which is how you roll back: deploy an earlier commit. AWS access comes from GitHub's
+# OIDC token for the `production` environment only (no stored keys).
+#
+# Adapted from winmetta/winmetta-platform (.github/workflows/deploy-web.yml).
+#
+# One-time setup, in Settings > Environments > production, these variables (none is secret):
+#   SITE_URL                    https://ninegene.com
+#   PUBLIC_ALLOW_INDEXING       true (false asks crawlers to stay away)
+#   SITE_BUCKET                 the `siteBucket` stack output
+#   CLOUDFRONT_DISTRIBUTION_ID  the `distributionId` stack output
+# and the environment secret AWS_ACCOUNT_ID. The repository is public and GitHub does not
+# mask variables in logs, so the account ID is a secret: secrets are masked.
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Branch, tag or full commit SHA to deploy (an earlier commit rolls back)
+        required: true
+        default: main
+
+permissions:
+  contents: read
+
+# Deploys run one at a time and are never cancelled half way.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    # workflow_run also fires for pull requests (a fork's branch can be called main), so
+    # require a successful run for a push to this repository's main.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      ASTRO_TELEMETRY_DISABLED: '1'
+      SITE_URL: ${{ vars.SITE_URL }}
+      PUBLIC_ALLOW_INDEXING: ${{ vars.PUBLIC_ALLOW_INDEXING }}
+      SITE_BUCKET: ${{ vars.SITE_BUCKET }}
+      DISTRIBUTION_ID: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+    steps:
+      # actions/checkout treats only a full 40-character value as a commit SHA.
+      - name: Check the ref
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          REF: ${{ inputs.ref }}
+        run: |
+          if printf '%s' "$REF" | grep -qE '^[0-9a-fA-F]{7,39}$'; then
+            echo "::error::The ref looks like an abbreviated commit SHA. Use the full SHA (git rev-parse <short sha>), a branch or a tag."
+            exit 1
+          fi
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || inputs.ref }}
+      - name: Check the environment variables
+        run: |
+          for name in SITE_URL PUBLIC_ALLOW_INDEXING SITE_BUCKET DISTRIBUTION_ID AWS_ACCOUNT_ID; do
+            if [ -z "${!name}" ]; then
+              echo "::error::The variable or secret for $name is not set (see the top of this workflow)"
+              exit 1
+            fi
+          done
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: package.json
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Sign in to AWS with the deploy role
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ninegene-com-deploy
+          aws-region: us-east-1
+      # `aws s3 sync` sets no Cache-Control, so upload in passes. Hashed files are never
+      # deleted, so a page opened before a deploy keeps its CSS. Everything else is
+      # deleted when the build no longer has it. Versioning keeps old objects recoverable.
+      - name: Upload hashed files (immutable for a year)
+        run: aws s3 sync dist/_astro "s3://$SITE_BUCKET/_astro" --cache-control "public, max-age=31536000, immutable" --size-only --only-show-errors
+      - name: Upload fonts, feeds and other files (one hour)
+        run: aws s3 sync dist "s3://$SITE_BUCKET" --exclude "*.html" --exclude "_astro/*" --delete --cache-control "public, max-age=3600" --only-show-errors
+      # HTML last, so a page never points at a file that is not uploaded yet.
+      - name: Upload HTML (always revalidate)
+        run: aws s3 sync dist "s3://$SITE_BUCKET" --exclude "*" --include "*.html" --delete --cache-control "public, max-age=0, must-revalidate" --only-show-errors
+      - name: Invalidate the CloudFront cache
+        run: |
+          id="$(aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION_ID" --paths "/*" --query Invalidation.Id --output text)"
+          aws cloudfront wait invalidation-completed --distribution-id "$DISTRIBUTION_ID" --id "$id"
+      - name: Check the live site
+        run: |
+          for path in / /projects/ /learn/ /about/; do
+            code="$(curl -s -o /dev/null -w '%{http_code}' "${SITE_URL%/}$path")"
+            echo "$path $code"
+            [ "$code" = 200 ] || { echo "::error::$path returned $code"; exit 1; }
+          done
+      - name: Summary
+        run: echo "Deployed $(git rev-parse HEAD) to $SITE_URL" >> "$GITHUB_STEP_SUMMARY"

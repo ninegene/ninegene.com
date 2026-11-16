@@ -1,0 +1,10 @@
+dist/
+.astro/
+node_modules/
+package-lock.json
+infra/pulumi/package-lock.json
+infra/pulumi/node_modules/
+# prettier-plugin-astro adds spaces inside inline elements ("[ available ]"),
+# which the site renders as written (compressHTML is off), so .astro files are
+# formatted by hand.
+*.astro

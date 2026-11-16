@@ -1,0 +1,21 @@
+{
+  "name": "ninegene-com-infra",
+  "private": true,
+  "description": "Pulumi program for ninegene.com (S3, CloudFront, ACM, Route 53, deploy role). See ../README.md.",
+  "main": "index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "node --test \"functions/*.test.mjs\""
+  },
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "dependencies": {
+    "@pulumi/aws": "^7.55.0",
+    "@pulumi/pulumi": "^3.276.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "typescript": "^6.0.3"
+  }
+}

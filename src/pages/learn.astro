@@ -1,0 +1,65 @@
+---
+import Base from '../layouts/Base.astro';
+import Sect from '../components/Sect.astro';
+---
+
+<Base
+  title="Learn"
+  manName="LEARN"
+  description="Free resources from ALO (Gene) for people learning the command line and software development, and the approach behind a free weekend class."
+>
+  <Sect name="Name">
+    <h1>learn: free resources for learning software</h1>
+    <p class="lede">
+      For beginners, students, and developers picking up something unfamiliar.
+      Everything here is free and has no sign-up.
+    </p>
+  </Sect>
+
+  <Sect name="Start here">
+    <dl class="opts">
+      <dt>New to the terminal</dt>
+      <dd>
+        <strong>Shell Explain</strong> explains common commands with examples,
+        options and mistakes to avoid, both in the terminal and on the web.
+        <span class="status" data-status="in development">in development</span>
+      </dd>
+      <dt>Learning by doing</dt>
+      <dd>
+        <strong>Shell Lab</strong> will offer short Bash lessons with a real,
+        disposable shell in the browser.
+        <span class="status" data-status="planned">planned</span>
+      </dd>
+      <dt>Preparing for a first developer job</dt>
+      <dd>
+        <strong>Dev Practice</strong> will offer exercises in JavaScript and
+        Python for writing and reading code, clarifying requirements, testing,
+        and using an AI agent while still understanding the result.
+        <span class="status" data-status="planned">planned</span>
+      </dd>
+      <dt>Setting up a machine</dt>
+      <dd>
+        <a href="https://github.com/winmetta/bootstrap-dev-env">bootstrap-dev-env</a>
+        sets up a Mac for development with one command.
+        <span class="status" data-status="available">available</span>
+      </dd>
+      <dt>Learning Burmese</dt>
+      <dd>
+        The <a href="https://app.winmetta.org">Win Metta Platform</a> will grow
+        an interactive Burmese literacy course; <strong>Learn Burmese</strong>{' '}
+        is a separate learning platform in development.
+      </dd>
+    </dl>
+    <p>These links will go live as each project is released.</p>
+  </Sect>
+
+  <Sect name="Weekend class">
+    <p>
+      On weekends I teach a few middle and high school students, for free:
+      coding, how the internet works, staying safe online, and how to use AI
+      tools without letting them do the thinking. The approach is simple: try it
+      yourself first, then ask the AI to challenge your answer, and finally
+      explain the code back in your own words.
+    </p>
+  </Sect>
+</Base>

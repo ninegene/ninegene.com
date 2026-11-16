@@ -1,0 +1,79 @@
+---
+import Base from '../layouts/Base.astro';
+import Sect from '../components/Sect.astro';
+import ProjectEntry from '../components/ProjectEntry.astro';
+import { getProjects } from '../lib/content';
+
+const projects = await getProjects();
+const featured = projects.filter((p) => p.data.featured);
+---
+
+<Base
+  title="ALO (Gene) · ninegene"
+  description="ALO, known to some as Gene. Software team lead: I build software, improve how teams develop and operate it, and teach what I learn."
+>
+  <Sect name="Name">
+    <h1>
+      <span title="Aung Lwin Oo">ALO</span>, known to some as Gene
+    </h1>
+    <p class="lede">
+      I build software, improve how teams develop and operate it, and teach what
+      I learn.
+    </p>
+  </Sect>
+
+  <Sect name="Synopsis">
+    <dl class="opts">
+      <dt>
+        <a href="/projects/">projects/</a>
+      </dt>
+      <dd>Things I built, with the story of how and why.</dd>
+      <dt>
+        <a href="/learn/">learn/</a>
+      </dt>
+      <dd>
+        Free resources for people learning the command line and software
+        development.
+      </dd>
+      <dt>
+        <a href="/about/">about/</a>
+      </dt>
+      <dd>Work, volunteering, teaching, and how to reach me.</dd>
+    </dl>
+  </Sect>
+
+  <Sect name="Description">
+    <p>
+      I'm a software team lead at
+      <a href="https://365retailmarkets.com/">365 Retail Markets</a>, where for
+      more than ten years I've worked across backend services, point-of-sale
+      software and cloud infrastructure. Lately much of my work is developer
+      tooling: release automation, repeatable development environments, and AI
+      tools that help developers, QA and support find answers faster.
+    </p>
+    <p>
+      Outside work I'm the volunteer tech lead for
+      <a href="https://winmetta.org/">Win Metta</a>, a small nonprofit, and on
+      weekends I teach a few middle and high school students about coding,
+      security, the internet and AI, for free.
+    </p>
+  </Sect>
+
+  <Sect name="Projects">
+    <ul class="entries">
+      {featured.map((project) => (
+        <ProjectEntry project={project} />
+      ))}
+    </ul>
+    <p>
+      <a href="/projects/">All projects</a>, including work in progress.
+    </p>
+  </Sect>
+
+  <Sect name="See also">
+    <p class="mono">
+      <a href="https://github.com/ninegene">github.com/ninegene</a>,
+      <a href="https://github.com/winmetta">github.com/winmetta</a>
+    </p>
+  </Sect>
+</Base>

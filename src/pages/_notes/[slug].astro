@@ -1,0 +1,49 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Sect from '../../components/Sect.astro';
+import { getNotes, isoDate } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const notes = await getNotes();
+  return notes.map((note) => ({ params: { slug: note.id }, props: { note } }));
+}
+
+const { note } = Astro.props;
+const n = note.data;
+const { Content } = await render(note);
+---
+
+<Base
+  title={n.title}
+  manName="NOTES"
+  description={n.description}
+  type="article"
+>
+  <article>
+    <Sect name="Name">
+      <h1>{n.title}</h1>
+      <p class="meta">
+        <time datetime={isoDate(n.date)}>{isoDate(n.date)}</time>
+        {n.updated && (
+          <>
+            {' '}
+            · updated{' '}
+            <time datetime={isoDate(n.updated)}>{isoDate(n.updated)}</time>
+          </>
+        )}
+        {n.tags.length > 0 && <> · {n.tags.join(', ')}</>}
+        {n.draft && <> · draft, not published</>}
+      </p>
+    </Sect>
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+  <hr />
+  <Sect name="See also">
+    <p>
+      <a href="/notes/">All notes</a> · <a href="/rss.xml">RSS feed</a>
+    </p>
+  </Sect>
+</Base>
