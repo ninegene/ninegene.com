@@ -41,6 +41,17 @@ test('a missing trailing slash redirects with 301 and keeps the query', () => {
   assert.equal(withQuery.headers.location.value, '/notes/?a=1&t=x&t=y');
 });
 
+test('the trailing-slash redirect never points to another host', () => {
+  for (const [uri, location] of [
+    ['//evil', '/evil/'],
+    ['//evil.com/page', '/evil.com/page/'],
+    ['/\\evil', '/evil/'],
+    ['//\\evil', '/evil/'],
+  ]) {
+    assert.equal(run(uri).headers.location.value, location, uri);
+  }
+});
+
 test('files with an extension pass through unchanged', () => {
   for (const uri of [
     '/robots.txt',

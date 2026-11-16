@@ -32,7 +32,10 @@ function handler(event) {
 
   var lastSegment = uri.substring(uri.lastIndexOf('/') + 1);
   if (lastSegment.indexOf('.') === -1) {
-    return redirect(uri + '/' + queryString(request.querystring));
+    // Collapse leading slashes and backslashes: a Location of //host/ or /\host/
+    // is protocol-relative, so browsers would leave the site (open redirect).
+    var path = uri.replace(/^[\/\\]+/, '/');
+    return redirect(path + '/' + queryString(request.querystring));
   }
 
   return request;
