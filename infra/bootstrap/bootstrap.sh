@@ -35,11 +35,15 @@ export AWS_REGION="$REGION" AWS_DEFAULT_REGION="$REGION" AWS_PAGER=""
     exit 1
 }
 
-# Run a changing command, or only print it in a dry run.
+# Run a changing command, or only print it in a dry run. AWS responses can
+# contain the account ID (an OIDC provider ARN, for example), so mask it in the
+# command's output.
 run() {
+    local out
     if $apply; then
         echo "+ $*"
-        "$@"
+        out="$("$@")"
+        [[ -z "$out" ]] || printf '%s\n' "${out//${account_id:-ACCOUNT}/ACCOUNT}"
     else
         echo "[dry run] $*"
     fi
