@@ -1,5 +1,8 @@
 # Created with:
-#   pulumi stack init prod --secrets-provider "awskms://alias/ninegene-pulumi?region=us-east-1"
+#   pulumi stack init prod --secrets-provider "awskms://alias/ninegene-pulumi?region=us-east-2"
 # which adds `secretsprovider` and `encryptedkey` here. This stack has no secrets.
+# `region` is the AWS project's Region (AWS Settings > Project > Overview > Additional
+# info); keep it, Pulumi.yaml's backend URL and the bootstrap's REGION the same.
 config:
   ninegene-com:delegationConfirmed: 'false'
+  ninegene-com:region: us-east-2

@@ -3,8 +3,14 @@
 // Fastmail mail records) and the GitHub OIDC deploy role.
 //
 // Adapted from winmetta/winmetta-platform (infra/pulumi/index.ts), without its
-// analytics, feedback and preview-role parts. Everything lives in us-east-1, so one AWS
-// provider covers it, including the CloudFront certificate, which must be requested there.
+// analytics, feedback and preview-role parts.
+//
+// Regions: the AWS account is a project account from AWS's new sign-up (AWS Settings,
+// Projects) with advanced features active. Its managed policies allow only global
+// services (CloudFront, IAM, Route 53, ACM, STS) in us-east-1, so Regional resources
+// (the site bucket) live in the project's Region (`region` config, us-east-2 for a US
+// address; see AWS Settings > Project > Overview > Additional info). The CloudFront
+// certificate must be requested in us-east-1 and uses its own provider.
 //
 // The first apply is staged, because ACM DNS validation needs the zone to be live:
 //   1. With `delegationConfirmed` unset (false), `pulumi up` creates only the hosted zone,
@@ -32,6 +38,7 @@ const githubSubjectPrefix =
   config.get('githubSubjectPrefix') ?? `repo:${githubRepo}`;
 const siteBucketName = config.get('siteBucketName') ?? 'ninegene-com-site';
 const delegationConfirmed = config.getBoolean('delegationConfirmed') ?? false;
+const region = config.get('region') ?? 'us-east-2';
 
 const tags = {
   project: 'ninegene.com',
@@ -39,10 +46,15 @@ const tags = {
   'managed-by': 'pulumi',
 };
 const provider = new aws.Provider('aws', {
-  region: 'us-east-1',
+  region,
   defaultTags: { tags },
 });
 const opts: pulumi.CustomResourceOptions = { provider };
+// CloudFront only accepts ACM certificates from us-east-1.
+const usEast1 = new aws.Provider('aws-us-east-1', {
+  region: 'us-east-1',
+  defaultTags: { tags },
+});
 
 const account = aws.getCallerIdentityOutput({}, { provider });
 // Created once by infra/bootstrap/bootstrap.sh, not by this program.
@@ -258,7 +270,7 @@ if (delegationConfirmed) {
       subjectAlternativeNames: [wwwDomain],
       validationMethod: 'DNS',
     },
-    opts,
+    { provider: usEast1 },
   );
   const validationFqdns = [domain, wwwDomain].map((name) => {
     const option = certificate.domainValidationOptions.apply((options) => {
@@ -283,7 +295,7 @@ if (delegationConfirmed) {
   const validation = new aws.acm.CertificateValidation(
     'site',
     { certificateArn: certificate.arn, validationRecordFqdns: validationFqdns },
-    opts,
+    { provider: usEast1 },
   );
 
   distribution = new aws.cloudfront.Distribution(

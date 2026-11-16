@@ -3,7 +3,7 @@
 Source of [ninegene.com](https://ninegene.com), the personal site of ALO, known to some as Gene: projects and free learning resources.
 
 - **Site:** [Astro](https://astro.build) 7, static output, content in Markdown, no client JavaScript.
-- **Hosting:** private S3 bucket behind CloudFront, Route 53 DNS, ACM certificate, all in AWS `us-east-1`, defined with [Pulumi](https://www.pulumi.com) in TypeScript under [infra/](infra/README.md).
+- **Hosting:** private S3 bucket (in the AWS project's Region, `us-east-2`) behind CloudFront, Route 53 DNS, ACM certificate (in `us-east-1`), defined with [Pulumi](https://www.pulumi.com) in TypeScript under [infra/](infra/README.md).
 - **Deploys:** GitHub Actions with OIDC (no stored keys), after CI passes on `main`.
 
 ## Develop
