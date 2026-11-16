@@ -45,6 +45,24 @@ run() {
     fi
 }
 
+# Run a read-only check and print one word: "exists", "missing" (the error matched
+# $1, the service's not-found pattern) or "blocked" (any other error, such as an
+# AccessDenied from a policy, which is also printed to stderr with the account ID
+# masked). Telling "missing" from "blocked" keeps the script from trying to create
+# what it isn't allowed to see.
+probe() {
+    local missing_pattern="$1" err
+    shift
+    if err="$("$@" 2>&1 >/dev/null)"; then
+        echo exists
+    elif [[ "$err" =~ $missing_pattern ]]; then
+        echo missing
+    else
+        printf '%s\n' "${err//${account_id:-ACCOUNT}/ACCOUNT}" >&2
+        echo blocked
+    fi
+}
+
 # Read-only calls always run, so the dry run shows what already exists.
 identity="$(aws sts get-caller-identity --query '[Arn,Account]' --output text)" || {
     echo "Not signed in. Run: aws login --profile $AWS_PROFILE" >&2
@@ -57,15 +75,29 @@ echo "Region: $REGION   State bucket: $BUCKET   KMS alias: $KMS_ALIAS"
 $apply || echo "Dry run: nothing will change. Add --apply to create the resources."
 echo
 
+# Preflight: check all three resources before changing anything, so a denied
+# check stops the run instead of failing halfway through. A read that is allowed
+# doesn't prove the create is, but a denied read means the create would fail too.
+bucket_state="$(probe '404|Not Found|NoSuchBucket' aws s3api head-bucket --bucket "$BUCKET")"
+key_state="$(probe 'NotFoundException' aws kms describe-key --key-id "$KMS_ALIAS")"
+provider_arn="arn:aws:iam::${account_id}:oidc-provider/${OIDC_URL}"
+oidc_state="$(probe 'NoSuchEntity' aws iam get-open-id-connect-provider --open-id-connect-provider-arn "$provider_arn")"
+echo "Preflight: bucket $bucket_state, KMS key $key_state, OIDC provider $oidc_state"
+if [[ "$bucket_state" == blocked || "$key_state" == blocked || "$oidc_state" == blocked ]]; then
+    {
+        echo "error: a check above was refused, so nothing was changed."
+        [[ "$bucket_state" == blocked ]] && echo "  bucket: the name may belong to another account (rerun with BUCKET=<another name>), or a policy denies S3."
+        [[ "$oidc_state" == blocked ]] && echo "  OIDC provider: an AWS-managed policy denies iam:*Provider*: activate advanced features and check that no service control policy still denies it (see infra/README.md)."
+        echo "  Fix the cause, then run this script again."
+    } >&2
+    exit 1
+fi
+echo
+
 # 1. State bucket ---------------------------------------------------------------
-head_err=""
-if head_err="$(aws s3api head-bucket --bucket "$BUCKET" 2>&1)"; then
+if [[ "$bucket_state" == exists ]]; then
     echo "ok       bucket $BUCKET exists (settings below are re-applied, which is harmless)"
 else
-    # A 403 means the name exists but belongs to someone else (bucket names are global).
-    case "$head_err" in
-    *403* | *Forbidden*) echo "error: bucket name $BUCKET is taken by another account; rerun with BUCKET=<another name>" >&2 && exit 1 ;;
-    esac
     # Every Region except us-east-1 needs a LocationConstraint. The bucket is private
     # from the start.
     location=()
@@ -86,7 +118,7 @@ run aws s3api put-bucket-lifecycle-configuration --bucket "$BUCKET" \
     --lifecycle-configuration '{"Rules":[{"ID":"expire-old-state-versions","Status":"Enabled","Filter":{},"NoncurrentVersionExpiration":{"NoncurrentDays":90},"AbortIncompleteMultipartUpload":{"DaysAfterInitiation":7}}]}'
 
 # 2. KMS key for Pulumi secrets -------------------------------------------------
-if aws kms describe-key --key-id "$KMS_ALIAS" >/dev/null 2>&1; then
+if [[ "$key_state" == exists ]]; then
     echo "ok       KMS key $KMS_ALIAS exists"
 else
     if $apply; then
@@ -106,8 +138,7 @@ else
 fi
 
 # 3. GitHub Actions OIDC identity provider ---------------------------------------
-provider_arn="arn:aws:iam::${account_id}:oidc-provider/${OIDC_URL}"
-if aws iam get-open-id-connect-provider --open-id-connect-provider-arn "$provider_arn" >/dev/null 2>&1; then
+if [[ "$oidc_state" == exists ]]; then
     echo "ok       OIDC provider $OIDC_URL exists"
 else
     # AWS validates GitHub's certificate against its trusted CAs, so no thumbprint is needed.
