@@ -6,7 +6,6 @@ role: Author
 owner: ninegene
 stack: [Harp, HTML, CSS]
 period: 2014–2020
-siteUrl: http://kusalakari.org
 repoUrl: https://github.com/ninegene/kusalakari.org
 order: 20
 ---
