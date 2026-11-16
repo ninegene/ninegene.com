@@ -4,7 +4,7 @@
 # `region` is the AWS project's Region (AWS Settings > Project > Overview > Additional
 # info); keep it, Pulumi.yaml's backend URL and the bootstrap's REGION the same.
 config:
-  ninegene-com:delegationConfirmed: 'false'
+  ninegene-com:delegationConfirmed: 'true'
   ninegene-com:region: us-east-2
 secretsprovider: awskms://alias/ninegene-pulumi?region=us-east-2
 encryptedkey: AQICAHgPzazC6KLjTA3dzUnCHh3RQUFSsB38ta92FtcJItqsygFigA0RlMtpaxd/8xL+XhelAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMKIPRKhV+RRJJzj5VAgEQgDvrJ8SNSEsgPK3owae3xuvo+HBDmgy0Elu8ZwD6ownznB42rP68sT8tFrlvOECO4lbdh7sXeSuvjKq3Fg==
