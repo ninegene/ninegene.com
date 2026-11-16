@@ -1,41 +1,27 @@
-Check [documentation](https://hexo.io/docs/) for more info.
-If you get any problems when using Hexo, you can find the answer in [troubleshooting](https://hexo.io/docs/troubleshooting.html) or you can ask me on [GitHub](https://github.com/hexojs/hexo/issues).
+# ninegene.com
 
-## Quick Start
+Source of [ninegene.com](https://ninegene.com), the personal site of ALO, known to some as Gene: projects, free learning resources and notes.
 
-### Create a new post
+- **Site:** [Astro](https://astro.build) 7, static output, content in Markdown, no client JavaScript.
+- **Hosting:** private S3 bucket behind CloudFront, Route 53 DNS, ACM certificate, all in AWS `us-east-1`, defined with [Pulumi](https://www.pulumi.com) in TypeScript under [infra/](infra/README.md).
+- **Deploys:** GitHub Actions with OIDC (no stored keys), after CI passes on `main`.
 
-``` bash
-$ hexo new "My New Post"
-```
+## Develop
 
-More info: [Writing](https://hexo.io/docs/writing.html)
-
-### Run server
-
-``` bash
-$ hexo server
-OR
-$ hexo server --watch
-```
-
-More info: [Server](https://hexo.io/docs/server.html)
-
-### Generate static files
-
-``` bash
-$ hexo generate
-```
-
-More info: [Generating](https://hexo.io/docs/generating.html)
-
-### Deploy to remote sites
-
-``` bash
-$ hexo deploy
-```
+Requires Node.js 24 and [just](https://just.systems). With [mise](https://mise.jdx.dev), `mise install` provides Node and Pulumi.
 
 ```bash
-$ hexo generate --deploy
+just setup     # install dependencies
+just dev       # http://127.0.0.1:4321, draft notes included
+just check     # everything CI checks
 ```
-More info: [Deployment](https://hexo.io/docs/deployment.html)
+
+Add a project in `src/content/projects/` or a note in `src/content/notes/`; the front matter fields are defined in `src/content.config.ts`. Conventions for content, design and privacy are in [AGENTS.md](AGENTS.md).
+
+## Infrastructure
+
+See [infra/README.md](infra/README.md) for the one-time setup, the staged first deploy and how DNS and mail move to Route 53.
+
+## History
+
+Until 2026 this repository held an older Hexo blog. Its posts are still in the git history before the Astro rewrite.

@@ -1,0 +1,5 @@
+# Created with:
+#   pulumi stack init prod --secrets-provider "awskms://alias/ninegene-pulumi?region=us-east-1"
+# which adds `secretsprovider` and `encryptedkey` here. This stack has no secrets.
+config:
+  ninegene-com:delegationConfirmed: 'false'

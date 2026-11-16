@@ -1,0 +1,454 @@
+/*
+ * A man page you can read for a long time: the structure of man(1) (header line,
+ * upper-case section names, indented bodies, footer line) with proportional body
+ * text. Monospace is for labels, commands and metadata only.
+ */
+
+@import '@fontsource/ibm-plex-sans/400.css';
+@import '@fontsource/ibm-plex-sans/400-italic.css';
+@import '@fontsource/ibm-plex-sans/600.css';
+@import '@fontsource/ibm-plex-mono/400.css';
+@import '@fontsource/ibm-plex-mono/600.css';
+@import '@fontsource/noto-sans-myanmar/400.css';
+
+:root {
+  color-scheme: light dark;
+
+  --paper: #f6f3eb;
+  --paper-2: #ece7da;
+  --ink: #1f1e1b;
+  --ink-2: #4a463f;
+  --muted: #6e685d;
+  --rule: #d6cfbf;
+  --accent: #8a3b12;
+  --accent-ink: #6d2d0c;
+
+  --st-available: #2f6b3a;
+  --st-development: #8a5a00;
+  --st-planned: #3d5a80;
+  --st-historical: #6e685d;
+
+  --sans: 'IBM Plex Sans', 'Noto Sans Myanmar', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --step--1: 0.875rem;
+  --step-0: 1.125rem;
+  --step-1: 1.3rem;
+  --step-2: 1.6rem;
+
+  /* Body indent, like the 7-column indent under a man page section name. */
+  --indent: 7ch;
+  --measure: 68ch;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #171614;
+    --paper-2: #211f1c;
+    --ink: #ebe6da;
+    --ink-2: #c9c2b3;
+    --muted: #9b9486;
+    --rule: #3a362f;
+    --accent: #f0a46c;
+    --accent-ink: #f6bf95;
+
+    --st-available: #8fcf8f;
+    --st-development: #e7c06a;
+    --st-planned: #9db8e0;
+    --st-historical: #9b9486;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+}
+
+.page {
+  max-width: calc(var(--measure) + var(--indent) + 4rem);
+  margin: 0 auto;
+  padding: 1.25rem 1.25rem 3rem;
+}
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+a:hover {
+  color: var(--accent-ink);
+  text-decoration-thickness: 2px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.skip {
+  position: absolute;
+  left: -999px;
+}
+
+.skip:focus {
+  left: 1rem;
+  top: 1rem;
+  background: var(--paper);
+  padding: 0.25rem 0.5rem;
+}
+
+/* --- man header and footer lines ------------------------------------------------- */
+
+.manline {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-family: var(--mono);
+  font-size: var(--step--1);
+  color: var(--muted);
+}
+
+.manline > :nth-child(2) {
+  text-align: center;
+}
+
+.manline > :last-child {
+  text-align: right;
+}
+
+@media (max-width: 34rem) {
+  .manline > :nth-child(2) {
+    display: none;
+  }
+}
+
+/* --- navigation, written like a command line -------------------------------------- */
+
+.nav {
+  margin: 1.5rem 0 2.5rem;
+  font-family: var(--mono);
+  font-size: var(--step--1);
+}
+
+.nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav li + li {
+  margin-top: 0;
+}
+
+.nav .prompt {
+  color: var(--muted);
+  user-select: none;
+}
+
+.nav a {
+  color: var(--ink-2);
+  text-decoration: none;
+}
+
+.nav a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.nav a[aria-current='page'] {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+}
+
+/* --- sections ---------------------------------------------------------------------- */
+
+.sect {
+  margin: 0 0 2.25rem;
+}
+
+.sect > h2,
+.sect-title {
+  margin: 0 0 0.5rem;
+  font-family: var(--mono);
+  font-size: var(--step-0);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.sect > .body,
+.prose {
+  margin-left: var(--indent);
+  max-width: var(--measure);
+}
+
+@media (max-width: 40rem) {
+  :root {
+    --indent: 1.25rem;
+    --step-0: 1.0625rem;
+  }
+}
+
+.body > :first-child,
+.prose > :first-child {
+  margin-top: 0;
+}
+
+p,
+ul,
+ol {
+  margin: 0 0 1rem;
+}
+
+li + li {
+  margin-top: 0.35rem;
+}
+
+h1 {
+  margin: 0 0 0.5rem;
+  font-size: var(--step-2);
+  line-height: 1.25;
+}
+
+.lede {
+  color: var(--ink-2);
+  font-size: var(--step-1);
+  line-height: 1.5;
+}
+
+/* Prose from Markdown (notes, project stories). */
+.prose h2 {
+  margin: 2rem 0 0.5rem;
+  font-family: var(--mono);
+  font-size: var(--step-0);
+  letter-spacing: 0.02em;
+}
+
+.prose h3 {
+  margin: 1.5rem 0 0.25rem;
+  font-size: var(--step-0);
+}
+
+.prose blockquote {
+  margin: 1rem 0;
+  padding-left: 1rem;
+  border-left: 3px solid var(--rule);
+  color: var(--ink-2);
+}
+
+.prose img {
+  max-width: 100%;
+  height: auto;
+}
+
+.prose table {
+  border-collapse: collapse;
+  font-size: var(--step--1);
+}
+
+.prose th,
+.prose td {
+  padding: 0.35rem 0.6rem;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  vertical-align: top;
+}
+
+code,
+kbd,
+pre {
+  font-family: var(--mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  padding: 0.05em 0.3em;
+  background: var(--paper-2);
+  border-radius: 3px;
+}
+
+pre {
+  overflow-x: auto;
+  margin: 0 0 1rem;
+  padding: 0.85rem 1rem;
+  background: var(--paper-2) !important;
+  border-left: 3px solid var(--rule);
+  line-height: 1.5;
+}
+
+@media (prefers-color-scheme: dark) {
+  .astro-code,
+  .astro-code span {
+    color: var(--shiki-dark) !important;
+  }
+}
+
+hr {
+  border: 0;
+  border-top: 1px dashed var(--rule);
+  margin: 2rem 0;
+}
+
+/* --- small labels -------------------------------------------------------------------- */
+
+.mono {
+  font-family: var(--mono);
+}
+
+.meta {
+  font-family: var(--mono);
+  font-size: var(--step--1);
+  color: var(--muted);
+}
+
+.status {
+  font-family: var(--mono);
+  font-size: var(--step--1);
+  white-space: nowrap;
+}
+
+.status::before {
+  content: '[';
+  color: var(--muted);
+}
+
+.status::after {
+  content: ']';
+  color: var(--muted);
+}
+
+.status[data-status='available'] {
+  color: var(--st-available);
+}
+
+.status[data-status='in development'] {
+  color: var(--st-development);
+}
+
+.status[data-status='planned'] {
+  color: var(--st-planned);
+}
+
+.status[data-status='historical'] {
+  color: var(--st-historical);
+}
+
+/* --- definition lists, the man page OPTIONS layout ----------------------------------- */
+
+.opts {
+  margin: 0;
+}
+
+.opts dt {
+  font-family: var(--mono);
+  font-weight: 600;
+}
+
+.opts dd {
+  margin: 0.1rem 0 1rem var(--indent);
+}
+
+@media (max-width: 40rem) {
+  .opts dd {
+    margin-left: 1.25rem;
+  }
+}
+
+/* --- project entries ----------------------------------------------------------------- */
+
+.entries {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.entry {
+  padding: 0.85rem 0;
+  border-top: 1px dashed var(--rule);
+}
+
+.entry:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.entry-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+}
+
+.entry-name {
+  font-family: var(--mono);
+  font-weight: 600;
+}
+
+.entry p {
+  margin: 0.2rem 0 0.25rem;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--mono);
+  font-size: var(--step--1);
+}
+
+.links li + li {
+  margin-top: 0;
+}
+
+/* Burmese text: the Myanmar font needs more line height for stacked characters. */
+:lang(my) {
+  font-family: 'Noto Sans Myanmar', var(--sans);
+  line-height: 1.9;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Key-value metadata on one line each (project synopsis). */
+.opts.kv {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.3rem 1.5rem;
+}
+
+.opts.kv dt {
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.opts.kv dd {
+  margin: 0;
+}

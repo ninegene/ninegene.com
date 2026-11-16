@@ -1,0 +1,112 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  // <title> and og:title. "ALO (Gene)" is appended unless this is the home page.
+  title: string;
+  description: string;
+  // Man page name shown in the header and footer lines, e.g. "PROJECTS".
+  manName?: string;
+  type?: 'website' | 'article';
+}
+
+const {
+  title,
+  description,
+  manName = 'NINEGENE',
+  type = 'website',
+} = Astro.props;
+const isHome = Astro.url.pathname === '/';
+const fullTitle = isHome ? title : `${title} · ALO (Gene)`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const manId = `${manName}(7)`;
+const built = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'America/Los_Angeles',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+}).format(new Date());
+
+const nav = [
+  { href: '/', label: 'home' },
+  { href: '/projects/', label: 'projects' },
+  { href: '/learn/', label: 'learn' },
+  { href: '/notes/', label: 'notes' },
+  { href: '/about/', label: 'about' },
+];
+const path = Astro.url.pathname;
+const current = (href: string) =>
+  href === '/' ? path === '/' : path.startsWith(href);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Notes by ALO (Gene)"
+      href="/rss.xml"
+    />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="theme-color"
+      content="#f6f3eb"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#171614"
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content="ninegene.com" />
+    <meta name="author" content="ALO" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <div class="page">
+      <header>
+        <div class="manline" aria-hidden="true">
+          <span>{manId}</span>
+          <span>ninegene.com manual</span>
+          <span>{manId}</span>
+        </div>
+        <nav class="nav" aria-label="Main">
+          <ul>
+            <li class="prompt" aria-hidden="true">$ ls</li>
+            {nav.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  aria-current={current(item.href) ? 'page' : undefined}
+                >{item.label}/</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </header>
+      <main id="main">
+        <slot />
+      </main>
+      <footer>
+        <hr />
+        <div class="manline">
+          <span>ninegene.com</span>
+          <span>updated {built}</span>
+          <span aria-hidden="true">{manId}</span>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

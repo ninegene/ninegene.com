@@ -1,0 +1,68 @@
+---
+import Base from '../../layouts/Base.astro';
+import Sect from '../../components/Sect.astro';
+import ProjectEntry from '../../components/ProjectEntry.astro';
+import { getProjects } from '../../lib/content';
+
+const projects = await getProjects();
+const groups = [
+  {
+    name: 'Featured',
+    items: projects.filter((p) => p.data.featured),
+  },
+  {
+    name: 'Also available',
+    items: projects.filter(
+      (p) => !p.data.featured && p.data.status === 'available',
+    ),
+  },
+  {
+    name: 'In progress',
+    items: projects.filter(
+      (p) =>
+        !p.data.featured &&
+        (p.data.status === 'in development' || p.data.status === 'planned'),
+    ),
+  },
+  {
+    name: 'Earlier work',
+    items: projects.filter((p) => p.data.status === 'historical'),
+  },
+];
+---
+
+<Base
+  title="Projects"
+  manName="PROJECTS"
+  description="Software ALO (Gene) built or maintains: the Win Metta Platform, agent skills for AI coding agents, a developer machine bootstrap, and learning tools in progress."
+>
+  <Sect name="Name">
+    <h1>projects: things I built and maintain</h1>
+  </Sect>
+
+  <Sect name="Description">
+    <p>
+      Each entry says where it stands:{' '}
+      <span class="status" data-status="available">available</span>{' '}
+      you can use today,{' '}
+      <span class="status" data-status="in development">in development</span>{' '}
+      is being built,{' '}
+      <span class="status" data-status="planned">planned</span>{' '}
+      is designed but not built, and{' '}
+      <span class="status" data-status="historical">historical</span>{' '}
+      is older work kept for the record. Private source is labelled as such.
+    </p>
+  </Sect>
+
+  {groups
+    .filter((group) => group.items.length > 0)
+    .map((group) => (
+      <Sect name={group.name}>
+        <ul class="entries">
+          {group.items.map((project) => (
+            <ProjectEntry project={project} detailed />
+          ))}
+        </ul>
+      </Sect>
+    ))}
+</Base>

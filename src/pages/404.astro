@@ -1,0 +1,20 @@
+---
+import Base from '../layouts/Base.astro';
+import Sect from '../components/Sect.astro';
+---
+
+<Base title="Not found" manName="ERRNO" description="This page does not exist.">
+  <Sect name="Name">
+    <h1>404: no such file or directory</h1>
+  </Sect>
+  <Sect name="Description">
+    <p>
+      The page you asked for isn't here. It may have moved when this site was
+      rebuilt in 2026.
+    </p>
+    <p>
+      Try <a href="/">home</a>, <a href="/projects/">projects</a> or{' '}
+      <a href="/notes/">notes</a>.
+    </p>
+  </Sect>
+</Base>

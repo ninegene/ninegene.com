@@ -1,0 +1,78 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Sect from '../../components/Sect.astro';
+import { getProjects } from '../../lib/content';
+
+// Only projects with a written story get a page.
+export async function getStaticPaths() {
+  const projects = await getProjects();
+  return projects
+    .filter((project) => project.body?.trim())
+    .map((project) => ({ params: { slug: project.id }, props: { project } }));
+}
+
+const { project } = Astro.props;
+const p = project.data;
+const { Content } = await render(project);
+---
+
+<Base
+  title={p.title}
+  manName={project.id.toUpperCase()}
+  description={p.summary}
+  type="article"
+>
+  <Sect name="Name">
+    <h1>{p.title}</h1>
+    <p class="lede">{p.summary}</p>
+  </Sect>
+
+  <Sect name="Synopsis">
+    <dl class="opts kv">
+      <dt>status</dt>
+      <dd>
+        <span class="status" data-status={p.status}>{p.status}</span>
+      </dd>
+      <dt>role</dt>
+      <dd>{p.role}</dd>
+      <dt>period</dt>
+      <dd>{p.period}</dd>
+      {p.stack.length > 0 && (
+        <>
+          <dt>stack</dt>
+          <dd>{p.stack.join(', ')}</dd>
+        </>
+      )}
+      {p.siteUrl && (
+        <>
+          <dt>site</dt>
+          <dd>
+            <a href={p.siteUrl}>{p.siteUrl.replace(/^https?:\/\//, '')}</a>
+          </dd>
+        </>
+      )}
+      <dt>source</dt>
+      <dd>
+        {p.repoUrl ? (
+          <a href={p.repoUrl}>{p.repoUrl.replace(/^https:\/\//, '')}</a>
+        ) : (
+          'private'
+        )}
+      </dd>
+    </dl>
+  </Sect>
+
+  <section class="sect" aria-labelledby="story">
+    <h2 id="story">Story</h2>
+    <div class="prose">
+      <Content />
+    </div>
+  </section>
+
+  <Sect name="See also">
+    <p>
+      <a href="/projects/">All projects</a>
+    </p>
+  </Sect>
+</Base>

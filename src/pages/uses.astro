@@ -1,0 +1,45 @@
+---
+import Base from '../layouts/Base.astro';
+import Sect from '../components/Sect.astro';
+---
+
+<Base
+  title="Uses"
+  manName="USES"
+  description="The editors, tools and AI assistants ALO (Gene) uses day to day."
+>
+  <Sect name="Name">
+    <h1>uses: tools I work with</h1>
+  </Sect>
+
+  <Sect name="Editors">
+    <p>Vim, VS Code (also in GitHub Codespaces) and IntelliJ IDEA.</p>
+  </Sect>
+
+  <Sect name="Notes">
+    <p>Obsidian, in plain Markdown files.</p>
+  </Sect>
+
+  <Sect name="Command line">
+    <p>
+      Bash and zsh, with tools installed by{' '}
+      <a href="https://mise.jdx.dev/">mise</a>
+      through <a href="/projects/bootstrap-dev-env/">bootstrap-dev-env</a>,
+      including GNU coreutils on macOS so commands behave the same as on Linux.
+    </p>
+  </Sect>
+
+  <Sect name="AI assistants">
+    <p>
+      Claude, ChatGPT and Gemini, mostly as coding agents (Claude Code and
+      Codex) with shared <a href="/projects/agent-skills/">agent skills</a>.
+    </p>
+  </Sect>
+
+  <Sect name="Infrastructure">
+    <p>
+      AWS at work with Terraform; Pulumi in TypeScript for my own and Win Metta
+      projects, including this site.
+    </p>
+  </Sect>
+</Base>
