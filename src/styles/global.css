@@ -238,7 +238,7 @@ h1 {
   line-height: 1.5;
 }
 
-/* Prose from Markdown (notes, project stories). */
+/* Prose from Markdown (project stories). */
 .prose h2 {
   margin: 2rem 0 0.5rem;
   font-family: var(--mono);

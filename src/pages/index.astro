@@ -2,11 +2,10 @@
 import Base from '../layouts/Base.astro';
 import Sect from '../components/Sect.astro';
 import ProjectEntry from '../components/ProjectEntry.astro';
-import { getNotes, getProjects, isoDate } from '../lib/content';
+import { getProjects } from '../lib/content';
 
 const projects = await getProjects();
 const featured = projects.filter((p) => p.data.featured);
-const notes = (await getNotes()).slice(0, 3);
 ---
 
 <Base
@@ -36,10 +35,6 @@ const notes = (await getNotes()).slice(0, 3);
         Free resources for people learning the command line and software
         development.
       </dd>
-      <dt>
-        <a href="/notes/">notes/</a>
-      </dt>
-      <dd>What I learn from building and running software.</dd>
       <dt>
         <a href="/about/">about/</a>
       </dt>
@@ -74,19 +69,6 @@ const notes = (await getNotes()).slice(0, 3);
       <a href="/projects/">All projects</a>, including work in progress.
     </p>
   </Sect>
-
-  {notes.length > 0 && (
-    <Sect name="Recent notes">
-      <ul class="entries">
-        {notes.map((note) => (
-          <li class="entry">
-            <a href={`/notes/${note.id}/`}>{note.data.title}</a>
-            <span class="meta"> {isoDate(note.data.date)}</span>
-          </li>
-        ))}
-      </ul>
-    </Sect>
-  )}
 
   <Sect name="See also">
     <p class="mono">

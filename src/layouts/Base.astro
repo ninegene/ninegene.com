@@ -31,7 +31,6 @@ const nav = [
   { href: '/', label: 'home' },
   { href: '/projects/', label: 'projects' },
   { href: '/learn/', label: 'learn' },
-  { href: '/notes/', label: 'notes' },
   { href: '/about/', label: 'about' },
 ];
 const path = Astro.url.pathname;
@@ -48,12 +47,6 @@ const current = (href: string) =>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link
-      rel="alternate"
-      type="application/rss+xml"
-      title="Notes by ALO (Gene)"
-      href="/rss.xml"
-    />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta name="color-scheme" content="light dark" />
     <meta

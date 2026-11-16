@@ -104,7 +104,7 @@ jobs:
           aws cloudfront wait invalidation-completed --distribution-id "$DISTRIBUTION_ID" --id "$id"
       - name: Check the live site
         run: |
-          for path in / /projects/ /notes/ /rss.xml; do
+          for path in / /projects/ /learn/ /about/; do
             code="$(curl -s -o /dev/null -w '%{http_code}' "${SITE_URL%/}$path")"
             echo "$path $code"
             [ "$code" = 200 ] || { echo "::error::$path returned $code"; exit 1; }

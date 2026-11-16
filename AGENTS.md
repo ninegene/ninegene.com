@@ -1,6 +1,6 @@
 # AGENTS.md: ninegene.com
 
-Personal site of ALO (ninegene): projects, learning resources and notes. Static Astro site, Markdown content, hosted on AWS (private S3 + CloudFront) with infrastructure in Pulumi. This file adds to the workspace `AGENTS.md`; where they differ, this file wins for this repo.
+Personal site of ALO (ninegene): projects and learning resources. Static Astro site, Markdown content, hosted on AWS (private S3 + CloudFront) with infrastructure in Pulumi. This file adds to the workspace `AGENTS.md`; where they differ, this file wins for this repo.
 
 ## This repo is public
 
@@ -19,7 +19,7 @@ Use `just` (see `justfile`):
 | Command              | What it does                                                                              |
 | -------------------- | ----------------------------------------------------------------------------------------- |
 | `just setup`         | Install site and infra dependencies                                                       |
-| `just dev`           | Dev server at http://127.0.0.1:4321 (shows draft notes)                                   |
+| `just dev`           | Dev server at http://127.0.0.1:4321                                                       |
 | `just preview`       | Build and serve `dist/`                                                                   |
 | `just check`         | Everything CI runs: Prettier, `astro check`, build, infra typecheck and tests, ShellCheck |
 | `just infra-preview` | `pulumi preview` (needs AWS credentials; read-only)                                       |
@@ -27,8 +27,9 @@ Use `just` (see `justfile`):
 ## Layout
 
 - `src/content/projects/*.md`: one file per project. Front matter is validated by `src/content.config.ts`. A body (the "engineering story") gives the project its own page; no body means a list entry only.
-- `src/content/notes/*.md`: notes. `draft: true` notes appear only in `astro dev`, never in the build or RSS.
-- `src/pages/`: Home, Projects, Learn, Notes, About, plus `uses`, `404`, `rss.xml`, `robots.txt`.
+- `src/content/notes/*.md`: draft note outlines. The Notes section is hidden until the first notes are written: its pages are `src/pages/_notes/` and `src/pages/_rss.xml.ts`, which Astro skips because of the leading `_` (see `ROADMAP.md`).
+- `src/pages/`: Home, Projects, Learn, About, plus `uses`, `404`, `robots.txt`.
+- `ROADMAP.md`: planned work, including how to bring Notes back.
 - `src/styles/global.css`: the whole design system (see below).
 - `infra/pulumi/`: hosting (zone with Fastmail mail records, bucket, CloudFront, certificate, deploy role). `infra/bootstrap/bootstrap.sh`: one-time Pulumi state bucket, KMS key and GitHub OIDC provider. Runbook: `infra/README.md`.
 - `.github/workflows/ci.yml` checks every PR and push; `deploy.yml` deploys `main` after CI passes.
