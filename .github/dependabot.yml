@@ -1,0 +1,42 @@
+# Dependabot opens weekly PRs for npm packages and GitHub Actions.
+# Node.js (mise.toml, engines, @types/node majors) and the Pulumi CLI are not
+# covered here: the Version check workflow reports them in an issue.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directories:
+      - /
+      - /infra/pulumi
+    schedule:
+      interval: weekly
+      day: monday
+      time: '05:00'
+      timezone: America/Los_Angeles
+    commit-message:
+      prefix: chore(deps)
+    groups:
+      astro:
+        patterns: ['astro', '@astrojs/*']
+      pulumi:
+        patterns: ['@pulumi/*']
+      minor-and-patch:
+        patterns: ['*']
+        update-types: [minor, patch]
+    ignore:
+      # @astrojs/check 0.9 supports TypeScript 5 and 6 only (checked 2026-11-16).
+      # Remove this entry when it supports 7.
+      - dependency-name: typescript
+        versions: ['>=7']
+      # @types/node follows the Node.js major, which the Version check reports.
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '05:00'
+      timezone: America/Los_Angeles
+    commit-message:
+      prefix: ci

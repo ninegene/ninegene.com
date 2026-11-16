@@ -22,6 +22,7 @@ Use `just` (see `justfile`):
 | `just dev`           | Dev server at http://127.0.0.1:4321                                                       |
 | `just preview`       | Build and serve `dist/`                                                                   |
 | `just check`         | Everything CI runs: Prettier, `astro check`, build, infra typecheck and tests, ShellCheck |
+| `just versions`      | Compare Node.js and the Pulumi CLI with their newest LTS and release                      |
 | `just infra-preview` | `pulumi preview` (needs AWS credentials; read-only)                                       |
 
 ## Layout
@@ -33,7 +34,8 @@ Use `just` (see `justfile`):
 - `src/styles/global.css`: the whole design system (see below).
 - `infra/pulumi/`: hosting (zone with Fastmail mail records, bucket, CloudFront, certificate, deploy role). `infra/bootstrap/bootstrap.sh`: one-time Pulumi state bucket, KMS key and GitHub OIDC provider. Runbook: `infra/README.md`.
 - `.github/workflows/ci.yml` checks every PR and push; `deploy.yml` deploys `main` after CI passes.
-- `renovate.json`: Renovate opens weekly update PRs for npm packages, Node (LTS only, in `mise.toml`, both `engines` fields and `@types/node` together), the Pulumi CLI and GitHub Actions (pinned to commit digests). TypeScript is held below 7 until `@astrojs/check` supports it.
+- `.github/dependabot.yml`: weekly Dependabot PRs for npm packages (site and `infra/pulumi`) and GitHub Actions. TypeScript is held below 7 until `@astrojs/check` supports it; `@types/node` majors follow Node.js instead.
+- `.github/workflows/version-check.yml` and `scripts/check-versions.mjs`: weekly check of what Dependabot can't update, Node.js (`mise.toml`, both `engines` fields, `@types/node`) against the newest LTS and the Pulumi CLI against its latest release. It keeps one "Outdated versions" issue open while something is behind. Run it locally with `just versions`.
 
 ## Content rules
 

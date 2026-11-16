@@ -32,6 +32,11 @@ check:
     npm run typecheck --prefix infra/pulumi
     npm test --prefix infra/pulumi
     shellcheck infra/bootstrap/bootstrap.sh
+    node --test scripts/check-versions.test.mjs
+
+# Compare Node.js and the Pulumi CLI with their newest LTS and release (needs network).
+versions:
+    node scripts/check-versions.mjs
 
 # Preview infrastructure changes (read-only; needs AWS credentials).
 infra-preview:
