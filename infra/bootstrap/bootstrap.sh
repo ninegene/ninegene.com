@@ -7,14 +7,19 @@
 #   3. the GitHub Actions OIDC identity provider
 # Safe to re-run: each step checks whether the resource already exists.
 #
-# Dry run by default (prints every command, changes nothing). Sign in with an
-# administrator profile of the personal AWS account and set AWS_PROFILE, then apply with:
+# The account is a project account from AWS's new sign-up with advanced features
+# active: without them, the OIDC provider (step 3) is denied by AWS's managed policies.
+# Regional resources go in the project's Region (us-east-2 for a US address; set
+# REGION= if AWS Settings shows another), which must match Pulumi.yaml's backend URL.
+#
+# Dry run by default (prints every command, changes nothing). Sign in with
+# `aws login --profile <name>`, set AWS_PROFILE, then apply with:
 #   ./infra/bootstrap/bootstrap.sh --apply
 #
 # The account ID is never written to a file or printed. Works with bash 3.2 and AWS CLI v2.
 set -euo pipefail
 
-REGION="us-east-1"
+REGION="${REGION:-us-east-2}"
 BUCKET="${BUCKET:-ninegene-pulumi-state}" # bucket names are global; set BUCKET= if taken
 KMS_ALIAS="alias/ninegene-pulumi"
 OIDC_URL="token.actions.githubusercontent.com"
@@ -26,7 +31,7 @@ apply=false
 # CLI from blocking the script on a "less" prompt.
 export AWS_REGION="$REGION" AWS_DEFAULT_REGION="$REGION" AWS_PAGER=""
 [ -n "${AWS_PROFILE:-}" ] || {
-    echo "Set AWS_PROFILE to an administrator SSO profile first." >&2
+    echo "Set AWS_PROFILE to the profile you signed in with (aws login --profile <name>) first." >&2
     exit 1
 }
 
@@ -42,7 +47,7 @@ run() {
 
 # Read-only calls always run, so the dry run shows what already exists.
 identity="$(aws sts get-caller-identity --query '[Arn,Account]' --output text)" || {
-    echo "Not signed in. Run: aws sso login --profile $AWS_PROFILE" >&2
+    echo "Not signed in. Run: aws login --profile $AWS_PROFILE" >&2
     exit 1
 }
 caller="${identity%%$'\t'*}"
@@ -61,8 +66,11 @@ else
     case "$head_err" in
     *403* | *Forbidden*) echo "error: bucket name $BUCKET is taken by another account; rerun with BUCKET=<another name>" >&2 && exit 1 ;;
     esac
-    # us-east-1 takes no LocationConstraint. The bucket is private from the start.
-    run aws s3api create-bucket --bucket "$BUCKET" --region "$REGION" --object-ownership BucketOwnerEnforced
+    # Every Region except us-east-1 needs a LocationConstraint. The bucket is private
+    # from the start.
+    location=()
+    [ "$REGION" = "us-east-1" ] || location=(--create-bucket-configuration "LocationConstraint=$REGION")
+    run aws s3api create-bucket --bucket "$BUCKET" --region "$REGION" --object-ownership BucketOwnerEnforced ${location[@]+"${location[@]}"}
 fi
 run aws s3api put-public-access-block --bucket "$BUCKET" \
     --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true

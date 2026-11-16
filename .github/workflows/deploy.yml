@@ -87,7 +87,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ninegene-com-deploy
-          aws-region: us-east-1
+          aws-region: ${{ vars.AWS_REGION || 'us-east-2' }}
       # `aws s3 sync` sets no Cache-Control, so upload in passes. Hashed files are never
       # deleted, so a page opened before a deploy keeps its CSS. Everything else is
       # deleted when the build no longer has it. Versioning keeps old objects recoverable.

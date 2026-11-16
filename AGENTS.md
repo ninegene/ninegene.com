@@ -32,7 +32,7 @@ Use `just` (see `justfile`):
 - `src/pages/`: Home, Projects, Learn, About, plus `uses`, `404`, `robots.txt`.
 - `ROADMAP.md`: planned work, including how to bring Notes back.
 - `src/styles/global.css`: the whole design system (see below).
-- `infra/pulumi/`: hosting (zone with Fastmail mail records, bucket, CloudFront, certificate, deploy role). `infra/bootstrap/bootstrap.sh`: one-time Pulumi state bucket, KMS key and GitHub OIDC provider. Runbook: `infra/README.md`.
+- `infra/pulumi/`: hosting (zone with Fastmail mail records, bucket, CloudFront, certificate, deploy role). `infra/bootstrap/bootstrap.sh`: one-time Pulumi state bucket, KMS key and GitHub OIDC provider. Runbook: `infra/README.md`, which also describes the AWS account: a project account from AWS's new sign-up with advanced features active, so Regional resources go in the project's Region (`us-east-2`), only global services and the CloudFront certificate in `us-east-1`, and sign-in is `aws login`.
 - `.github/workflows/ci.yml` checks every PR and push; `deploy.yml` deploys `main` after CI passes.
 - `.github/dependabot.yml`: weekly Dependabot PRs for npm packages (site and `infra/pulumi`) and GitHub Actions. TypeScript is held below 7 until `@astrojs/check` supports it; `@types/node` majors follow Node.js instead.
 - `.github/workflows/version-check.yml` and `scripts/check-versions.mjs`: weekly check of what Dependabot can't update, Node.js (`mise.toml`, both `engines` fields, `@types/node`) against the newest LTS and the Pulumi CLI against its latest release. It keeps one "Outdated versions" issue open while something is behind. Run it locally with `just versions`.

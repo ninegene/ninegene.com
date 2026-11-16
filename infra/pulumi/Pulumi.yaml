@@ -7,4 +7,4 @@ runtime:
 # State lives in a private S3 bucket in the personal AWS account, created by
 # ../bootstrap/bootstrap.sh. Secrets use the KMS key it creates (see ../README.md).
 backend:
-  url: s3://ninegene-pulumi-state?region=us-east-1
+  url: s3://ninegene-pulumi-state?region=us-east-2
