@@ -30,6 +30,7 @@ jobs:
       - run: npm run format:check
       - run: npm run check
       - run: npm run build
+      - run: node --test scripts/check-versions.test.mjs
 
   infra:
     runs-on: ubuntu-latest
