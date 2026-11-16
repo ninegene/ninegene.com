@@ -33,6 +33,7 @@ Use `just` (see `justfile`):
 - `src/styles/global.css`: the whole design system (see below).
 - `infra/pulumi/`: hosting (zone with Fastmail mail records, bucket, CloudFront, certificate, deploy role). `infra/bootstrap/bootstrap.sh`: one-time Pulumi state bucket, KMS key and GitHub OIDC provider. Runbook: `infra/README.md`.
 - `.github/workflows/ci.yml` checks every PR and push; `deploy.yml` deploys `main` after CI passes.
+- `renovate.json`: Renovate opens weekly update PRs for npm packages, Node (LTS only, in `mise.toml`, both `engines` fields and `@types/node` together), the Pulumi CLI and GitHub Actions (pinned to commit digests). TypeScript is held below 7 until `@astrojs/check` supports it.
 
 ## Content rules
 
