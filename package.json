@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Personal site of ALO (ninegene): projects, learning resources and notes.",
   "engines": {
-    "node": ">=24 <25"
+    "node": ">=26 <27"
   },
   "scripts": {
     "dev": "astro dev --host 127.0.0.1",

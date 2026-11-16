@@ -8,7 +8,7 @@ Source of [ninegene.com](https://ninegene.com), the personal site of ALO, known 
 
 ## Develop
 
-Requires Node.js 24 and [just](https://just.systems). With [mise](https://mise.jdx.dev), `mise install` provides Node and Pulumi.
+Requires Node.js 26 (LTS) and [just](https://just.systems). With [mise](https://mise.jdx.dev), `mise install` provides Node and Pulumi.
 
 ```bash
 just setup     # install dependencies
