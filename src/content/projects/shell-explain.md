@@ -7,5 +7,6 @@ owner: ninegene
 stack: [Go, Astro, Markdown]
 period: 2026–
 siteUrl: https://shell-explain.ninegene.com/
+repoUrl: https://github.com/ninegene/shell-explain
 order: 10
 ---
