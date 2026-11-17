@@ -97,5 +97,5 @@ Every step below signs in to AWS or changes the live account, so each is run by 
 
 ## Later
 
-- A DMARC record (`_dmarc.ninegene.com`): there is none today. Start with `v=DMARC1; p=none; rua=mailto:<address>` once you choose where reports go.
+- DMARC: `_dmarc.ninegene.com` is `p=none` with reports to `dmarc@ninegene.com` (since 2026-11-16). After a few weeks of reports showing only Fastmail sending as the domain, change it to `p=quarantine` in `pulumi/index.ts`.
 - Subdomains for shell-explain, dev-practice and shell-lab: add their records to this program when each launches.
