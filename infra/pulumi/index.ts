@@ -87,9 +87,15 @@ const mailRecords: { name: string; type: string; records: string[] }[] = [
     ],
   },
   {
+    // One TXT record set per name in Route 53, so the apex holds every TXT value:
+    // Fastmail's SPF, and the Google Search Console domain verification (added
+    // 2026-11-17; keep it, or the Search Console property loses its owner).
     name: domain,
     type: 'TXT',
-    records: ['v=spf1 include:spf.messagingengine.com ?all'],
+    records: [
+      'v=spf1 include:spf.messagingengine.com ?all',
+      'google-site-verification=_NmdNCxrbvkL8Ihu6n7OKY_ooz3SzGQnsHwrCMrnZcM',
+    ],
   },
   ...['fm1', 'fm2', 'fm3'].map((selector) => ({
     name: `${selector}._domainkey.${domain}`,

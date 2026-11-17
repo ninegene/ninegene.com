@@ -93,7 +93,7 @@ Every step below signs in to AWS or changes the live account, so each is run by 
    ```
 
 5. **GitHub environment.** In the repository's Settings > Environments, create `production` with the variables `SITE_URL` (`https://ninegene.com`), `AWS_REGION` (the project's Region, only if it is not `us-east-2`), `PUBLIC_ALLOW_INDEXING` (`true`), `SITE_BUCKET` (`siteBucket` output), `CLOUDFRONT_DISTRIBUTION_ID` (`distributionId` output) and the secret `AWS_ACCOUNT_ID`. Then run the Deploy workflow (or merge to `main`).
-6. **After launch:** add `https://ninegene.com` to the GitHub profile's website field and submit `https://ninegene.com/sitemap-index.xml` in Google Search Console.
+6. **After launch:** add `https://ninegene.com` to the GitHub profile's website field. In Google Search Console, add a Domain property for `ninegene.com`, put its `google-site-verification=` value in the apex TXT record in `pulumi/index.ts`, apply, verify, then submit `https://ninegene.com/sitemap-index.xml`.
 
 ## Later
 
