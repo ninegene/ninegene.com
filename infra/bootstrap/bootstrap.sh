@@ -35,11 +35,24 @@ export AWS_REGION="$REGION" AWS_DEFAULT_REGION="$REGION" AWS_PAGER=""
     exit 1
 }
 
-# Run a changing command, or only print it in a dry run.
+# Print text with the account ID replaced by ACCOUNT. AWS responses and errors
+# contain it in ARNs (an OIDC provider ARN, the caller in an AccessDenied).
+mask() {
+    [[ -z "$1" ]] || printf '%s\n' "${1//${account_id:-ACCOUNT}/ACCOUNT}"
+}
+
+# Run a changing command, or only print it in a dry run. Its output and errors
+# are printed masked; a failure prints its masked error and returns its status.
 run() {
+    local out status
     if $apply; then
         echo "+ $*"
-        "$@"
+        if out="$("$@" 2>&1)"; then status=0; else status=$?; fi
+        if [[ "$status" -ne 0 ]]; then
+            mask "$out" >&2
+            return "$status"
+        fi
+        mask "$out"
     else
         echo "[dry run] $*"
     fi
@@ -58,7 +71,7 @@ probe() {
     elif [[ "$err" =~ $missing_pattern ]]; then
         echo missing
     else
-        printf '%s\n' "${err//${account_id:-ACCOUNT}/ACCOUNT}" >&2
+        mask "$err" >&2
         echo blocked
     fi
 }
@@ -122,7 +135,11 @@ if [[ "$key_state" == exists ]]; then
     echo "ok       KMS key $KMS_ALIAS exists"
 else
     if $apply; then
-        key_id="$(aws kms create-key --description "ninegene.com Pulumi secrets provider" --query KeyMetadata.KeyId --output text)"
+        # Not through run(): the new key's ID is needed for the next steps.
+        if ! key_id="$(aws kms create-key --description "ninegene.com Pulumi secrets provider" --query KeyMetadata.KeyId --output text 2>&1)"; then
+            mask "$key_id" >&2
+            exit 1
+        fi
         echo "+ aws kms create-key ... -> $key_id"
         # If a later step fails, a rerun would create a second key (the alias is what it
         # looks for), so say which key is left over.
