@@ -73,6 +73,10 @@ export const nameServers = zone.nameServers;
 // 2026-11-15 (MX, SPF and the three DKIM CNAMEs; there was no DMARC record). They must
 // exist here before the name servers are switched, or mail to @ninegene.com stops.
 // Fastmail's current list: https://www.fastmail.help/hc/en-us/articles/360060591153
+// DMARC (added 2026-11-16) starts at p=none: receivers deliver as before and send
+// daily aggregate reports to dmarc@ninegene.com, an alias set up in Fastmail. Move to
+// p=quarantine once the reports show only Fastmail sending as the domain. Subdomains
+// inherit the policy.
 const mailRecords: { name: string; type: string; records: string[] }[] = [
   {
     name: domain,
@@ -92,6 +96,11 @@ const mailRecords: { name: string; type: string; records: string[] }[] = [
     type: 'CNAME',
     records: [`${selector}.${domain}.dkim.fmhosted.com`],
   })),
+  {
+    name: `_dmarc.${domain}`,
+    type: 'TXT',
+    records: [`v=DMARC1; p=none; rua=mailto:dmarc@${domain}`],
+  },
 ];
 for (const record of mailRecords) {
   const label = record.name === domain ? 'apex' : record.name.split('.')[0];

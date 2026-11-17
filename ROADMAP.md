@@ -23,5 +23,5 @@ The pages and feed are already built and kept hidden: Astro skips files in `src/
 
 - A `/now` page: what I'm working on and learning this month.
 - Open Graph images for each page, generated at build time in the site's man-page style.
-- A DMARC record for the domain (see `infra/README.md`).
+- Tighten DMARC from `p=none` to `p=quarantine` once the reports are clean (see `infra/README.md`).
 - Subdomains for shell-explain, dev-practice and shell-lab as each launches.
