@@ -98,4 +98,4 @@ Every step below signs in to AWS or changes the live account, so each is run by 
 ## Later
 
 - DMARC: `_dmarc.ninegene.com` is `p=none` with reports to `dmarc@ninegene.com` (since 2026-11-16). After a few weeks of reports showing only Fastmail sending as the domain, change it to `p=quarantine` in `pulumi/index.ts`.
-- Subdomains for shell-explain, dev-practice and shell-lab: add their records to this program when each launches.
+- Subdomains for dev-practice and shell-lab: add their records to this program when each launches. `shell-explain.ninegene.com` is live and is managed by the shell-explain repository's own infrastructure, not here.

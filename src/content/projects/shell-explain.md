@@ -1,6 +1,6 @@
 ---
 title: Shell Explain
-summary: Practical explanations of shell commands, with examples, on the web and for the terminal (the `explain` CLI, not released yet), both built from the same Markdown files.
+summary: Practical explanations of shell commands, with examples, on the web and for the terminal (the `explain` CLI, released for macOS and Linux), both built from the same Markdown files.
 status: available
 role: Author
 owner: ninegene
